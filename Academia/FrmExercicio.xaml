@@ -1,0 +1,98 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Academia.FrmExercicio"
+             Title="Exercícios">
+
+    <ContentPage.Resources>
+        <Color x:Key="PrimaryColor">#4CAF50</Color>
+        <!-- Azul -->
+        <Color x:Key="SecondaryColor">#4CAF50</Color>
+        <!-- Verde -->
+        <Color x:Key="AccentColor">#FF5722</Color>
+        <!-- Laranja -->
+        <Color x:Key="TextColor">#212121</Color>
+        <!-- Cinza Escuro -->
+        <Color x:Key="BackgroundColor">#FFFFFF</Color>
+        <!-- Branco -->
+
+        <Style TargetType="Entry">
+            <Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource TextColor}" />
+            <Setter Property="Keyboard" Value="Numeric" />
+            <Setter Property="Margin" Value="10" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource PrimaryColor}" />
+            <Setter Property="TextColor" Value="{StaticResource BackgroundColor}" />
+            <Setter Property="Margin" Value="10" />
+        </Style>
+
+        <Style TargetType="TextCell">
+            <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+        </Style>
+
+        <Style TargetType="StackLayout">
+            <Setter Property="Margin" Value="10" />
+        </Style>
+    </ContentPage.Resources>
+
+    <StackLayout>
+        <Entry Keyboard="Default" TextChanged="OnSearchTextChanged" Placeholder="Digite o nome do exercício..." />
+
+        <Button Text="Novo Exercício" Clicked="NovoExercicioClicked" />
+
+        <StackLayout x:Name="NovoExercicioLayout" IsVisible="False">
+            <Entry x:Name="TxtExercicio" Placeholder="Digite o nome do exercício" Keyboard="Default"/>
+            <Entry x:Name="TxtSeries" Placeholder="Digite o N° de séries" MaxLength="3" Keyboard="Numeric"/>
+            <Entry x:Name="TxtRepeticoes" Placeholder="Digite o N° de repetições" MaxLength="3" Keyboard="Numeric"/>
+            <Entry x:Name="TxtPeso" Placeholder="Digite o peso em Kg" MaxLength="3" Keyboard="Numeric"/>
+            <Entry x:Name="TxtDescricao" Placeholder="Opcional** sobre o exercício" />
+            <Button Text="Salvar" Clicked="CadastrarExercicioClicked" />
+        </StackLayout>
+
+
+
+        <ListView x:Name="ExerciciosListView" ItemsSource="{Binding Exercicios}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding Nome}" TextColor="White" VerticalOptions="CenterAndExpand" Grid.Column="0">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="ExercicioTapped" CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+
+                            <Image Source="excluir.png" WidthRequest="24" HeightRequest="24" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="ExcluirExercicioTapped" CommandParameter="{Binding .}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+
+
+
+        <StackLayout x:Name="DetalhesStackLayout" IsVisible="False">
+            <Label Text="Detalhes do Exercício" FontAttributes="Bold" />
+            <Label Text="Número de Séries: " />
+            <Entry Text="{Binding Nseries}" />
+            <Label Text="Peso (Kg): " />
+            <Entry Text="{Binding Peso}" />
+            <Label Text="Descrição: " />
+            <Entry Text="{Binding Descricao}" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

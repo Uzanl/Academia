@@ -1,0 +1,107 @@
+﻿<FlyoutPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Academia.MainPage"
+             Title="DemoFlyoutPage"
+             FlyoutLayoutBehavior="Popover">
+
+    <FlyoutPage.Flyout>
+        <ContentPage Title="My App">
+            <ScrollView>
+                <StackLayout>
+                    <Button x:Name="btnExercicio" Text="Exercícios" Clicked="NovoExercicioClicked" />
+                    <Button x:Name="btnTreino" Text="Treinos" Clicked="NovoTreinoClicked" />
+                    <Button x:Name="btnVoltar" Text="Página Inicial" Clicked="VoltarClicked" />
+                </StackLayout>
+            </ScrollView>
+        </ContentPage>
+    </FlyoutPage.Flyout>
+
+    <FlyoutPage.Detail>
+        <NavigationPage>
+            <x:Arguments>
+                <ContentPage>
+                    <ScrollView>
+                        <StackLayout>
+                            <Entry Keyboard="Default" TextChanged="OnSearchTreinoTextChanged" Placeholder="Digite o nome do treino..." />
+
+                            <ScrollView>
+                                <StackLayout>
+                                    <ListView x:Name="TreinosPesqListView" ItemsSource="{Binding Treinos}" >
+                                        <!-- Defina o ItemTemplate para exibir os nomes dos treinos -->
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextCell Text="{Binding Nome}">
+                                                    <TextCell.TextColor>
+                                                        <OnPlatform x:TypeArguments="Color">
+                                                            <On Platform="Android" Value="White" />
+                                                            <On Platform="iOS" Value="DarkBlue" />
+                                                        </OnPlatform>
+                                                    </TextCell.TextColor>
+                                                </TextCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+
+                                    <Button Text="Novo Treino" Clicked="NovoTreinoeClicked" />
+
+                                    <ListView x:Name="TreinosListView" ItemsSource="{Binding Treinos}">
+                                        <!-- Defina o ItemTemplate e o evento ItemSelected para exibir os detalhes -->
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextCell Text="{Binding Nome}">
+                                                    <TextCell.TextColor>
+                                                        <OnPlatform x:TypeArguments="Color">
+                                                            <On Platform="Android" Value="White" />
+                                                            <On Platform="iOS" Value="DarkBlue" />
+                                                        </OnPlatform>
+                                                    </TextCell.TextColor>
+                                                </TextCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+
+                                    <StackLayout x:Name="NovoTreinoLayout" IsVisible="False" Spacing="10">
+                                        <Entry TextChanged="OnSearchTextChanged" x:Name="TxtNomeTreino" Placeholder="Digite o nome do exercício que deseja adicionar" Keyboard="Default"/>
+
+                                        <ListView x:Name="ExerciciosListView" ItemsSource="{Binding Exercicios}">
+                                            <!-- Defina o ItemTemplate e o evento ItemSelected para exibir os detalhes -->
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextCell Text="{Binding Nome}" Tapped="ExercicioTapped">
+                                                        <TextCell.TextColor>
+                                                            <OnPlatform x:TypeArguments="Color">
+                                                                <On Platform="Android" Value="White" />
+                                                                <On Platform="iOS" Value="DarkBlue" />
+                                                            </OnPlatform>
+                                                        </TextCell.TextColor>
+                                                    </TextCell>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+
+                                        <!-- Espaço entre as duas listas -->
+                                        <BoxView HeightRequest="10" BackgroundColor="Transparent" />
+
+                                        <Label Text="Exercícios Selecionados:" FontAttributes="Bold" />
+
+                                        <ListView x:Name="ExerciciosSelecionadosListView" ItemsSource="{Binding ExerciciosSelecionados}">
+                                            <!-- Defina o ItemTemplate e o evento ItemTapped para remover exercícios -->
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextCell Text="{Binding Nome}" Tapped="RemoverExercicioTapped" />
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                        <Entry x:Name="TxtCadNomeTreino" Placeholder="Digite o nome do treino que deseja adicionar" Keyboard="Default"/>
+
+                                        <Button Clicked="CadastrarTreino" Text="Salvar Treino"  />
+                                    </StackLayout>
+                                </StackLayout>
+                            </ScrollView>
+                        </StackLayout>
+                    </ScrollView>
+                </ContentPage>
+            </x:Arguments>
+        </NavigationPage>
+    </FlyoutPage.Detail>
+</FlyoutPage>
