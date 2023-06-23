@@ -6,16 +6,28 @@ namespace Academia;
 
 public partial class MainPage : FlyoutPage
 {
-    List<Treino> listatreino { get; set; } = new List<Treino>();
+    List<Treino> Listatreino { get; set; } = new List<Treino>();
+    List<Exercicios> Listaexercicios { get; set; } = new List<Exercicios>();
 
-    List<Exercicios> listaexercicios { get; set; } = new List<Exercicios>();
-
+    List<Exercicios> ListaExerciciosTreinos { get; set; } = new List<Exercicios>();
     private ObservableCollection<Exercicios> exerciciosSelecionados = new ObservableCollection<Exercicios>();
+
+   // private ObservableCollection<Exercicios> exerciciosRelacionados = new ObservableCollection<Exercicios>();
+
+    private void AddRange<T>(ObservableCollection<T> collection, IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            collection.Add(item);
+        }
+    }
+
 
     public MainPage()
     {
         InitializeComponent();
 
+       // ExerciciosRelacionados = new ObservableCollection<Exercicios>();
 
         string databaseFilename = "academia.db";
         string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseFilename);
@@ -63,13 +75,13 @@ public partial class MainPage : FlyoutPage
 
 
         // Obtenha os exercícios do banco de dados ou qualquer outra fonte de dados
-        listaexercicios = GetExerciciosFromDatabase();
-        listatreino = GetTreinosFromDatabase();
+        Listaexercicios = GetExerciciosFromDatabase();
+        Listatreino = GetTreinosFromDatabase();
 
 
-        TreinosPesqListView.ItemsSource = listatreino;
+        TreinosPesqListView.ItemsSource = Listatreino;
         // Defina a origem de dados da ListView
-        ExerciciosListView.ItemsSource = listaexercicios;
+        ExerciciosListView.ItemsSource = Listaexercicios;
 
         ExerciciosSelecionadosListView.ItemsSource = exerciciosSelecionados;
 
@@ -395,5 +407,122 @@ public partial class MainPage : FlyoutPage
         exerciciosSelecionados.Clear();
         ExerciciosSelecionadosListView.ItemsSource = null;
     }
+
+
+    private List<Exercicios> ConsultarExerciciosRelacionados(int treinoId)
+    {
+        List<Exercicios> exerciciosRelacionados = new List<Exercicios>();
+
+        string databaseFilename = "academia.db";
+        string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseFilename);
+        string connectionString = $"Data Source={databasePath}";
+
+        using (SqliteConnection connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            string query = $"SELECT e.* FROM exercicio e JOIN exercicios_treino et ON e.id_exercicio = et.id_exercicio WHERE et.id_treino = {treinoId}";
+
+            using (SqliteCommand command = new SqliteCommand(query, connection))
+            {
+                using (SqliteDataReader reader = command.ExecuteReader())
+                {
+                    //exerciciosRelacionados = new ObservableCollection<Exercicios>();
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(0);
+                        string nome = reader.GetString(1);
+                        int nseries = reader.GetInt32(2);
+                        int repeticao = reader.GetInt32(3);
+                        int peso = reader.GetInt32(4);
+                        string descricao = reader.GetString(5);
+
+                        Exercicios exercicio = new Exercicios(id, nome, nseries, repeticao, peso, descricao);
+                        exerciciosRelacionados.Add(exercicio);
+                    }
+                }
+            }
+
+            connection.Close();
+        }
+
+        return exerciciosRelacionados;
+    }
+
+    private void TreinoTapped(object sender, ItemTappedEventArgs e)
+    {
+       // ListView listView = (ListView)sender;
+        Treino treino = (Treino)e.Item;
+      
+
+        // Inverter a visibilidade da lista de exercícios relacionados
+      // ExerciciosTreinoListView.IsVisible = !ExerciciosTreinoListView.IsVisible;
+
+       
+            // Consultar os exercícios relacionados
+            List<Exercicios> exerciciosRelacionados = ConsultarExerciciosRelacionados(treino.Id_treino);
+
+            // Definir a origem de dados para a lista de exercícios
+            ExerciciosTreinoListView.ItemsSource = exerciciosRelacionados;
+       
+    }
+
+    private async void ExcluirExercicioTreinoTapped(object sender, EventArgs e)
+    {
+        // Obtém o exercício selecionado
+        var exercicio = (Exercicios)((Image)sender).BindingContext;
+
+        // Confirmação da exclusão
+        bool resposta = await DisplayAlert("Confirmação", $"Deseja excluir o exercício {exercicio.Nome}?", "Sim", "Não");
+
+        if (resposta)
+        {
+            // Remove o exercício da lista
+            ListaExerciciosTreinos.Remove(exercicio);
+
+            // Exclui o exercício do banco de dados
+            await ExcluirExercicioTreinoDoDatabase(exercicio);
+            // Atualiza a origem de dados da ListView
+            ExerciciosTreinoListView.ItemsSource = null;
+            ExerciciosTreinoListView.ItemsSource = ListaExerciciosTreinos;
+        }
+    }
+
+    private async Task ExcluirExercicioTreinoDoDatabase(Exercicios exercicio)
+    {
+        string databaseFilename = "academia.db";
+        string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseFilename);
+        string connectionString = $"Data Source={databasePath}";
+
+        using (SqliteConnection connection = new SqliteConnection(connectionString))
+        {
+            await connection.OpenAsync();
+
+            // Execute o comando SQL para excluir o exercício
+            string deleteQuery = $"DELETE FROM exercicios_treino WHERE id_exercicio = {exercicio.Id_exercicio}";
+            using (SqliteCommand deleteCommand = new SqliteCommand(deleteQuery, connection))
+            {
+                int rowsAffected = await deleteCommand.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                {
+                    // Exclusão bem-sucedida, exiba um aviso
+                    await DisplayAlert("Sucesso", "Exercício excluído com sucesso.", "OK");
+                }
+                else
+                {
+                    // Nenhum registro foi excluído, exiba uma mensagem de aviso
+                    await DisplayAlert("Aviso", "O exercício não foi encontrado.", "OK");
+                }
+            }
+
+            connection.Close();
+        }
+    }
+
+
+
+
+
 }
 

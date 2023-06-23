@@ -79,14 +79,6 @@ public partial class FrmExercicio : ContentPage
         string connectionString = $"Data Source={databasePath}";
 
 
-
-      
-
-        
-
-
-
-
         using (SqliteConnection connection = new(connectionString))
         {
             connection.Open();

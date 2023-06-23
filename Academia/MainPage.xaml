@@ -26,39 +26,24 @@
 
                             <ScrollView>
                                 <StackLayout>
-                                    <ListView x:Name="TreinosPesqListView" ItemsSource="{Binding Treinos}" >
+                                    <ListView x:Name="TreinosPesqListView" ItemsSource="{Binding Treinos}" ItemTapped="TreinoTapped">
                                         <!-- Defina o ItemTemplate para exibir os nomes dos treinos -->
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <TextCell Text="{Binding Nome}">
-                                                    <TextCell.TextColor>
-                                                        <OnPlatform x:TypeArguments="Color">
-                                                            <On Platform="Android" Value="White" />
-                                                            <On Platform="iOS" Value="DarkBlue" />
-                                                        </OnPlatform>
-                                                    </TextCell.TextColor>
-                                                </TextCell>
+                                                <ViewCell>
+
+                                                    <Label Text="{Binding Nome}" TextColor="White" FontSize="18" />
+                                                    <!-- Adicione uma lista de exercícios relacionados abaixo do item -->
+
+                                                </ViewCell>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
+
 
                                     <Button Text="Novo Treino" Clicked="NovoTreinoeClicked" />
 
-                                    <ListView x:Name="TreinosListView" ItemsSource="{Binding Treinos}">
-                                        <!-- Defina o ItemTemplate e o evento ItemSelected para exibir os detalhes -->
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextCell Text="{Binding Nome}">
-                                                    <TextCell.TextColor>
-                                                        <OnPlatform x:TypeArguments="Color">
-                                                            <On Platform="Android" Value="White" />
-                                                            <On Platform="iOS" Value="DarkBlue" />
-                                                        </OnPlatform>
-                                                    </TextCell.TextColor>
-                                                </TextCell>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
+
 
                                     <StackLayout x:Name="NovoTreinoLayout" IsVisible="False" Spacing="10">
                                         <Entry TextChanged="OnSearchTextChanged" x:Name="TxtNomeTreino" Placeholder="Digite o nome do exercício que deseja adicionar" Keyboard="Default"/>
@@ -92,10 +77,39 @@
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
+
+
                                         <Entry x:Name="TxtCadNomeTreino" Placeholder="Digite o nome do treino que deseja adicionar" Keyboard="Default"/>
 
                                         <Button Clicked="CadastrarTreino" Text="Salvar Treino"  />
+
+                                     
+
                                     </StackLayout>
+                                    <ListView x:Name="ExerciciosTreinoListView" ItemsSource="{Binding Exercicios}">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ViewCell>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Label Text="{Binding Nome}" TextColor="White" VerticalOptions="CenterAndExpand" Grid.Column="0">
+                                                           
+                                                        </Label>
+
+                                                        <Image Source="excluir.png" WidthRequest="24" HeightRequest="24" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End">
+                                                            <Image.GestureRecognizers>
+                                                                <TapGestureRecognizer Tapped="ExcluirExercicioTreinoTapped" CommandParameter="{Binding .}" />
+                                                            </Image.GestureRecognizers>
+                                                        </Image>
+                                                    </Grid>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
                                 </StackLayout>
                             </ScrollView>
                         </StackLayout>

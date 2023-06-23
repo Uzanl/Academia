@@ -11,6 +11,7 @@ namespace Academia.Classes
         int id_treino;
         string nome;
 
+       
         public string Nome { get => nome; set => nome = value; }
         public int Id_treino { get => id_treino; set => id_treino = value; }
 
