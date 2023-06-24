@@ -65,14 +65,7 @@ public partial class FrmExercicio : ContentPage
             return;
         }
 
-        int peso;
-        if (!int.TryParse(TxtPeso.Text, out peso))
-        {
-            // Mostrar uma mensagem de erro ou tomar a ação apropriada
-            // Por exemplo: exibir um alerta ao usuário informando que o campo de peso deve ser um número
-            DisplayAlert("Erro", "O campo de peso deve ser um número válido.", "OK");
-            return;
-        }
+       
 
         string databaseFilename = "academia.db";
         string databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseFilename);
@@ -95,7 +88,10 @@ public partial class FrmExercicio : ContentPage
             exer.Nome = TxtExercicio.Text;
             exer.Nseries = series;
             exer.Repeticao = repeticoes;
-            exer.Peso = peso;
+            if (!string.IsNullOrWhiteSpace(TxtPeso.Text))
+            {
+                exer.Peso = Convert.ToInt32(TxtPeso.Text);
+            }
             exer.Descricao = TxtDescricao.Text;
 
             string insertQuery = $"INSERT INTO exercicio (nome, nseries, repeticao, peso, descricao) VALUES ('{exer.Nome}', {exer.Nseries}, {exer.Repeticao}, {exer.Peso}, '{exer.Descricao}')";

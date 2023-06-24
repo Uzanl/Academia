@@ -976,3 +976,4 @@ C:\Users\Uzann\source\repos\Academia\Academia\obj\Debug\net7.0-android\lp\153\jl
 C:\Users\Uzann\source\repos\Academia\Academia\obj\Debug\net7.0-android\lp\155\jl\files.cache
 C:\Users\Uzann\source\repos\Academia\Academia\obj\Debug\net7.0-android\lp\156\jl\files.cache
 C:\Users\Uzann\source\repos\Academia\Academia\obj\Debug\net7.0-android\lp\157\jl\files.cache
+C:\Users\Uzann\source\repos\Academia\Academia\obj\Debug\net7.0-android\resizetizer\r\drawable\excluir.png

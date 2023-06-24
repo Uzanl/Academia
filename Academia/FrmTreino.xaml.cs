@@ -7,5 +7,8 @@ public partial class FrmTreino : ContentPage
 		InitializeComponent();
 	}
 
+	public void teste()
+	{
 
+	}
 }
